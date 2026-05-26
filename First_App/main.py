@@ -1,23 +1,43 @@
-from fastapi import FastAPI
-from pydantic import BaseModel
+from fastapi import FastAPI, Request, Form
+from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
 
 app = FastAPI()
 
-class LoginData(BaseModel):
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
-    username: str
-    password: str
+templates = Jinja2Templates(directory="templates")
 
 
+# Home Page
 @app.get("/")
-async def home():
+async def home(request: Request):
 
-    return {"message": "Home Page"}
+    return templates.TemplateResponse(
+        "index.html",
+        {"request": request}
+    )
 
 
-@app.post("/")
-async def login(data: LoginData):
+# Login Page
+@app.get("/login")
+async def login_page(request: Request):
+
+    return templates.TemplateResponse(
+        "login.html",
+        {"request": request}
+    )
+
+
+# Login Form Submit
+@app.post("/login")
+async def login(
+    request: Request,
+    username: str = Form(...),
+    password: str = Form(...)
+):
 
     return {
-        "username": data.username
+        "username": username,
+        "password": password
     }
