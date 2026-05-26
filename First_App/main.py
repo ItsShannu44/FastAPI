@@ -9,7 +9,13 @@ class LoginData(BaseModel):
     password: str
 
 
-@app.post("/login")
+@app.get("/")
+async def home():
+
+    return {"message": "Home Page"}
+
+
+@app.post("/")
 async def login(data: LoginData):
 
     return {
