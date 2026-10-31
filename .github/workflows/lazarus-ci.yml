@@ -1,0 +1,21 @@
+name: Lazarus CI
+
+# Added by Lazarus so it can see failures. Runs on every branch, including Lazarus fix branches.
+on: [push, pull_request]
+
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install dependencies
+        run: |
+          pip install ruff
+      - name: Check for errors (syntax, undefined names)
+        run: ruff check --select E9,F63,F7,F82 --output-format full .
+      - name: Compile every Python file
+        run: python -m compileall -q .
